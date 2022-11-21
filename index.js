@@ -61,6 +61,6 @@ app.get("/", (req, res) => {
 app.all("*", (req, res) => {
   res.send("no such route found");
 });
-app.listen(8800, () => {
+app.listen(port, () => {
   console.log("Backend server is running!");
 });
