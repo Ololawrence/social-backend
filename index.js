@@ -10,7 +10,9 @@ const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
 const router = express.Router();
 const path = require("path");
+const bodyParser = require('body-parser');
 
+const port = process.env.PORT;
 dotenv.config();
 
 mongoose.connect(
@@ -23,7 +25,8 @@ mongoose.connect(
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 //middleware
-app.use(express.json());
+app.use(bodyParser.json());
+// app.use(bodyParser.UrlEncoded({ extended: false }));
 app.use(helmet());
 app.use(morgan("common"));
 
@@ -44,17 +47,20 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
     console.error(error);
   }
 });
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
+app.use("/api/posts", postRoute);
 
 app.get("/", (req, res) => {
   res.send("this is the app home page");
 });
 
-app.use("/api/auth", authRoute);
-app.use("/api/users", userRoute);
-app.use("/api/posts", postRoute);
 app.all("*", (req, res) => {
   res.send("no such route found");
 });
-app.listen(process.env.PORT || 8800, () => {
+app.listen(8800, () => {
   console.log("Backend server is running!");
 });
