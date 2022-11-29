@@ -10,11 +10,12 @@ const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
 const router = express.Router();
 const path = require("path");
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
+const cors = require('cors');
 
-const port = process.env.PORT;
 dotenv.config();
 
+const port = process.env.PORT;
 mongoose.connect(
   process.env.MONGO_URL,
   { useNewUrlParser: true, useUnifiedTopology: true },
@@ -26,7 +27,7 @@ app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 //middleware
 app.use(bodyParser.json());
-// app.use(bodyParser.UrlEncoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(helmet());
 app.use(morgan("common"));
 
@@ -49,7 +50,12 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
+  })
+);
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
